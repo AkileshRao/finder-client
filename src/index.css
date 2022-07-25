@@ -6,3 +6,7 @@
 :root {
     font-family: "Inter";
 }
+
+* {
+    outline: none !important;
+}

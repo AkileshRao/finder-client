@@ -1,0 +1,1 @@
+export const input = "p-2 w-full border-2 rounded border-slate-200 transition-all duration-400 ease-in-out focus:border-blue-400"
