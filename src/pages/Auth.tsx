@@ -2,8 +2,12 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { IoSearchCircle } from 'react-icons/io5'
 import { input } from "../sharedStyles";
+import Toast from '../components/Toast'
+import ReactDOM from 'react-dom';
+
 
 const Auth = () => {
+    const URL = "https://fendir.herokuapp.com";
     const [mode, setMode] = useState("LOGIN");
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -27,7 +31,7 @@ const Auth = () => {
 
         if (mode == "REGISTER") payload["role"] = role
 
-        axios.post("url", payload).then(res => {
+        axios.post(`${URL}/createUser`, payload).then(res => {
             console.log(res)
         }).catch(err => {
             console.log(err);
@@ -59,8 +63,16 @@ const Auth = () => {
         mode == "LOGIN" ? setMode("REGISTER") : setMode("LOGIN")
     }
 
+    const displayToast = () => {
+        ReactDOM.createPortal(
+            <Toast status="error" description="This is a dummy toast description" title="Error" />
+            , document.body)
+    }
+
     return (
         <div className='auth-container w-screen h-screen flex items-center justify-center'>
+            <button onClick={displayToast}>Hello</button>
+            {/* <Toast status="error" description="This is a dummy toast description" title="Error" /> */}
             <header className='flex flex-row items-center p-4 absolute top-0 left-0'>
                 <IoSearchCircle className='text-5xl text-blue-700' />
                 <h1 className='text-4xl font-bold text-blue-700'>Finder.</h1>
