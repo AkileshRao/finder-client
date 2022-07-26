@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { IoSearchCircle } from 'react-icons/io5'
 import { input } from "../sharedStyles";
 import Toast from '../components/Toast'
 import ReactDOM from 'react-dom';
+import { ToastContext } from '../state/Toastcontext';
 
 
 const Auth = () => {
@@ -13,6 +14,8 @@ const Auth = () => {
     const [password, setPassword] = useState("")
     const [confPassword, setConfPassword] = useState("")
     const [role, setRole] = useState("")
+
+    const { toasts, setToasts } = useContext(ToastContext)
 
     const handleChange = (event: any) => {
         const { name, value } = event.target;
@@ -63,16 +66,28 @@ const Auth = () => {
         mode == "LOGIN" ? setMode("REGISTER") : setMode("LOGIN")
     }
 
-    const displayToast = () => {
-        ReactDOM.createPortal(
-            <Toast status="error" description="This is a dummy toast description" title="Error" />
-            , document.body)
+    const addToast = (status: string, title: string, description: string) => {
+        let id = new Date().getTime()
+        setToasts([...toasts, {
+            id, status, title, description
+        }])
+        console.log(toasts);
+
+        setTimeout(() => {
+            setToasts([...toasts.filter((toast: any) => toast.id != id)])
+            console.log(toasts);
+
+        }, 5000)
     }
 
     return (
         <div className='auth-container w-screen h-screen flex items-center justify-center'>
-            <button onClick={displayToast}>Hello</button>
-            {/* <Toast status="error" description="This is a dummy toast description" title="Error" /> */}
+            <button onClick={() => addToast("error", "Error", "There was an error")}>Hello</button>
+            {/* <Toast status="error" description="This is a dummy toast description" title="Error" />
+            <Toast status="success" description="This is a dummy toast description" title="Error" />
+            <Toast status="warning" description="This is a dummy toast description" title="Error" />
+            <Toast status="info" description="This is a dummy toast description" title="Error" /> */}
+
             <header className='flex flex-row items-center p-4 absolute top-0 left-0'>
                 <IoSearchCircle className='text-5xl text-blue-700' />
                 <h1 className='text-4xl font-bold text-blue-700'>Finder.</h1>

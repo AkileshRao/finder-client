@@ -10,3 +10,12 @@
 * {
     outline: none !important;
 }
+
+#toast-portal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
