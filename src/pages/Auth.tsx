@@ -5,6 +5,8 @@ import { input } from "../sharedStyles";
 import Toast from '../components/Toast'
 import ReactDOM from 'react-dom';
 import { ToastContext } from '../state/Toastcontext';
+import { CommonContext } from '../state/Commoncontext';
+import { useNavigate } from 'react-router-dom';
 
 
 const Auth = () => {
@@ -15,7 +17,9 @@ const Auth = () => {
     const [confPassword, setConfPassword] = useState("")
     const [role, setRole] = useState("")
 
-    const { toasts, setToasts } = useContext(ToastContext)
+    const { toasts, setToasts, addToast } = useContext(ToastContext)!
+
+    const navigate = useNavigate();
 
     const handleChange = (event: any) => {
         const { name, value } = event.target;
@@ -28,16 +32,23 @@ const Auth = () => {
     const handleSubmit = (event: any) => {
         event.preventDefault();
         const { status, message } = validator();
-        if (!status) return console.log(message)
+        if (!status) return addToast("error", "Error", "Please fill the form correctly and try again.")
 
         let payload: any = { username, password }
 
         if (mode == "REGISTER") payload["role"] = role
 
-        axios.post(`${URL}/createUser`, payload).then(res => {
-            console.log(res)
+        axios.post(`${URL}/${mode == "LOGIN" ? "login" : "createUser"}`, payload).then(res => {
+            if (mode == "LOGIN") {
+                addToast("success", "Success", "User logged in successfully!");
+                navigate("/main")
+            } else {
+                addToast("success", "Success", "User registered successfully!");
+                setMode("LOGIN")
+            }
         }).catch(err => {
             console.log(err);
+            return addToast("error", "Error", "Something went wrong! Please try again.")
         })
     }
 
@@ -66,28 +77,8 @@ const Auth = () => {
         mode == "LOGIN" ? setMode("REGISTER") : setMode("LOGIN")
     }
 
-    const addToast = (status: string, title: string, description: string) => {
-        let id = new Date().getTime()
-        setToasts([...toasts, {
-            id, status, title, description
-        }])
-        console.log(toasts);
-
-        setTimeout(() => {
-            setToasts([...toasts.filter((toast: any) => toast.id != id)])
-            console.log(toasts);
-
-        }, 5000)
-    }
-
     return (
         <div className='auth-container w-screen h-screen flex items-center justify-center'>
-            <button onClick={() => addToast("error", "Error", "There was an error")}>Hello</button>
-            {/* <Toast status="error" description="This is a dummy toast description" title="Error" />
-            <Toast status="success" description="This is a dummy toast description" title="Error" />
-            <Toast status="warning" description="This is a dummy toast description" title="Error" />
-            <Toast status="info" description="This is a dummy toast description" title="Error" /> */}
-
             <header className='flex flex-row items-center p-4 absolute top-0 left-0'>
                 <IoSearchCircle className='text-5xl text-blue-700' />
                 <h1 className='text-4xl font-bold text-blue-700'>Finder.</h1>
