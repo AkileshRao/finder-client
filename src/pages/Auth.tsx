@@ -2,11 +2,9 @@ import axios from 'axios';
 import React, { useContext, useState } from 'react'
 import { IoSearchCircle } from 'react-icons/io5'
 import { input } from "../sharedStyles";
-import Toast from '../components/Toast'
-import ReactDOM from 'react-dom';
-import { ToastContext } from '../state/Toastcontext';
-import { CommonContext } from '../state/Commoncontext';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useToast } from '../customHooks/useToast';
+import { useAuth } from '../customHooks/useAuth';
 
 
 const Auth = () => {
@@ -17,9 +15,11 @@ const Auth = () => {
     const [confPassword, setConfPassword] = useState("")
     const [role, setRole] = useState("")
 
-    const { toasts, setToasts, addToast } = useContext(ToastContext)!
-
     const navigate = useNavigate();
+
+    const { toasts, addToast } = useToast()!
+    const { isLoggedIn, login, setIsLoggedIn } = useAuth();
+
 
     const handleChange = (event: any) => {
         const { name, value } = event.target;
@@ -32,21 +32,18 @@ const Auth = () => {
     const handleSubmit = (event: any) => {
         event.preventDefault();
         const { status, message } = validator();
-        if (!status) return addToast("error", "Error", "Please fill the form correctly and try again.")
-
-        let payload: any = { username, password }
-
-        if (mode == "REGISTER") payload["role"] = role
-
-        axios.post(`${URL}/${mode == "LOGIN" ? "login" : "createUser"}`, payload).then(res => {
+        if (!status) return addToast("error", "Error", message)
+        login(mode, username, password, role).then((res: any) => {
             if (mode == "LOGIN") {
+                setIsLoggedIn(true)
                 addToast("success", "Success", "User logged in successfully!");
-                navigate("/main")
+                localStorage.setItem("user", res.data.access_token);
+                navigate("/main", { replace: true })
             } else {
                 addToast("success", "Success", "User registered successfully!");
                 setMode("LOGIN")
             }
-        }).catch(err => {
+        }).catch((err: any) => {
             console.log(err);
             return addToast("error", "Error", "Something went wrong! Please try again.")
         })
@@ -64,7 +61,6 @@ const Auth = () => {
             if (password != confPassword) return { status: false, message: "Passwords do not match!" }
         }
 
-
         return { status: true, message: "Valid form" };
     }
 
@@ -77,6 +73,9 @@ const Auth = () => {
         mode == "LOGIN" ? setMode("REGISTER") : setMode("LOGIN")
     }
 
+    if (isLoggedIn) {
+        return <Navigate to="/main" />
+    }
     return (
         <div className='auth-container w-screen h-screen flex items-center justify-center'>
             <header className='flex flex-row items-center p-4 absolute top-0 left-0'>
