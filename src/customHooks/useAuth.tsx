@@ -7,6 +7,7 @@ const URL = "https://fendir.herokuapp.com";
 const AuthContext = createContext<any | null>(null);
 
 export const AuthProvider = ({ children }: any) => {
+    const navigate = useNavigate()
     const [isLoggedIn, setIsLoggedIn] = useState(() => {
         if (localStorage.getItem("user")) {
             return true
@@ -22,6 +23,8 @@ export const AuthProvider = ({ children }: any) => {
 
     const logout = () => {
         localStorage.clear();
+        setIsLoggedIn(false)
+        navigate("/")
     }
 
     return <AuthContext.Provider value={{ login, logout, isLoggedIn, setIsLoggedIn }}>

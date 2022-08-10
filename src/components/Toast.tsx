@@ -15,7 +15,7 @@ const Toast = () => {
         <div className='absolute top-4 right-4 flex flex-col gap-1' >
             {
                 toasts?.map((toast: any) =>
-                    <div className='w-96 max-w-xs bg-white border-2 px-3 py-2 rounded shadow-sm flex items-center cursor-pointer justify-between gap-3 hover:border-red-600' key={toast.id} id={toast.id} onClick={() => removeToast(toast.id)}>
+                    <div className='w-96 z-50 max-w-xs bg-white border-2 px-3 py-2 rounded shadow-sm flex items-center cursor-pointer justify-between gap-3 hover:border-red-600' key={toast.id} id={toast.id} onClick={() => removeToast(toast.id)}>
                         <div>
                             {toast.status == "error" && <h1 className='font-bold text-red-600'>{toast.title}</h1>}
                             {toast.status == "success" && <h1 className='font-bold text-green-600'>{toast.title}</h1>}
