@@ -1,14 +1,22 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useLoader } from "./useLoader";
 const URL = "https://fendir.herokuapp.com";
 
 const ProfilesContext = createContext<any>(null)
 
 export const ProfilesProvider = ({ children }: any) => {
     const [profiles, setProfiles] = useState([])
+    const { loading, setLoading } = useLoader()!;
 
-    useEffect(() => {
-        fetchProfiles().then((res: any) => {
+    const fetchProfiles = () => {
+        setLoading(true)
+        axios.get(`${URL}/Showlist`, {
+            headers: {
+                auth: localStorage.getItem("user")!
+            }
+        }).then((res: any) => {
+            setLoading(false)
             let newProfiles = res.data.map((profile: any) => {
                 return {
                     id: profile.to_id,
@@ -17,18 +25,13 @@ export const ProfilesProvider = ({ children }: any) => {
                 }
             })
             setProfiles(newProfiles);
-        })
-    }, [])
-
-    const fetchProfiles = () => {
-        return axios.get(`${URL}/Showlist`, {
-            headers: {
-                auth: localStorage.getItem("user")!
-            }
+        }).catch(err => {
+            setLoading(false)
+            console.log(err);
         })
     }
 
-    return <ProfilesContext.Provider value={{ profiles, fetchProfiles }}>
+    return <ProfilesContext.Provider value={{ profiles, setProfiles, fetchProfiles }}>
         {children}
     </ProfilesContext.Provider>
 }

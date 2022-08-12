@@ -6,16 +6,19 @@ import LoaderWrapper from './components/Loader'
 import './index.css'
 import { ToastProvider } from './customHooks/useToast'
 import { AuthProvider } from './customHooks/useAuth'
+import { LoaderProvider } from './customHooks/useLoader'
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <BrowserRouter>
-    <ToastProvider>
-      <AuthProvider>
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      </AuthProvider>
-    </ToastProvider>
+    <LoaderProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        </AuthProvider>
+      </ToastProvider>
+    </LoaderProvider>
   </BrowserRouter>
 )

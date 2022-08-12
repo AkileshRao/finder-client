@@ -1,14 +1,25 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 
-const useLoader = () => {
-    const [loading, setLoading] = useState(false);
-
-    const handleLoading = (value: boolean) => {
-        if (value == true) setLoading(false)
-        if (value == false) setLoading(true)
-    }
-
-    return [loading, handleLoading];
+interface ILoaderInterface {
+    loading: boolean;
+    setLoading: any;
 }
 
-export default useLoader
+export const LoaderContext = createContext<ILoaderInterface | null>(null)
+
+export const LoaderProvider = ({ children }: any) => {
+    const [loading, setLoading] = useState(false);
+
+    // const handleLoading = (value: boolean) => {
+    //     if (value == true) setLoading(false)
+    //     if (value == false) setLoading(true)
+    // }
+
+    return <LoaderContext.Provider value={{ loading, setLoading }}>
+        {children}
+    </LoaderContext.Provider>
+}
+
+export const useLoader = () => {
+    return useContext(LoaderContext)
+}

@@ -5,6 +5,7 @@ import { input } from "../sharedStyles";
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useToast } from '../customHooks/useToast';
 import { useAuth } from '../customHooks/useAuth';
+import { useLoader } from '../customHooks/useLoader';
 
 const Auth = () => {
     const [mode, setMode] = useState("LOGIN");
@@ -12,6 +13,7 @@ const Auth = () => {
     const [password, setPassword] = useState("")
     const [confPassword, setConfPassword] = useState("")
     const [role, setRole] = useState("")
+    const { setLoading, loading } = useLoader()!
     const navigate = useNavigate();
 
     const { addToast } = useToast()!
@@ -27,10 +29,12 @@ const Auth = () => {
     }
 
     const handleSubmit = (event: any) => {
+        setLoading(true)
         event.preventDefault();
         const { status, message } = validator();
         if (!status) return addToast("error", "Error", message)
         login(mode, username, password, role).then((res: any) => {
+            setLoading(false)
             if (mode == "LOGIN") {
                 setIsLoggedIn(true)
                 addToast("success", "Success", "User logged in successfully!");
@@ -43,6 +47,7 @@ const Auth = () => {
                 setMode("LOGIN")
             }
         }).catch((err: any) => {
+            setLoading(false)
             console.log(err);
             return addToast("error", "Error", "Something went wrong! Please try again.")
         })
