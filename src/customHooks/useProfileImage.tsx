@@ -1,9 +1,14 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const ProfileImageContext = createContext<any>(null)
 
 export const ProfileImageProvider = ({ children }: any) => {
     const [link, setLink] = useState(() => localStorage.getItem("link"))
+
+    useEffect(() => {
+        const currentImageURL = localStorage.getItem("link")
+        localStorage.setItem("link", currentImageURL)
+    }, [link])
 
     const updateLink = (linkName: string, linkVal: string) => {
         setLink(linkVal)

@@ -10,12 +10,30 @@ import Main from './pages/Main'
 import Matches from './pages/Matches'
 import { ProfileImageProvider } from './customHooks/useProfileImage'
 import { ProfilesProvider } from './customHooks/useProfiles'
+import axios from 'axios'
+import { useAuth } from './customHooks/useAuth'
+import { useToast } from './customHooks/useToast'
 
 
 function App() {
   const { loading } = useLoader()!
+  const { isLoggedIn, logout } = useAuth()
+  const { addToast } = useToast()!
 
-  useEffect(() => { }, [loading])
+
+  useEffect(() => {
+    const authInterceptor = axios.interceptors.response.use(undefined, (err) => {
+      if (err.response.status == 401) {
+        logout();
+        addToast("error", "Expired!", "Your session timed out. Please re-login.")
+      }
+      return Promise.reject(err)
+    })
+
+    return () => {
+      axios.interceptors.response.eject(authInterceptor)
+    }
+  }, [loading])
   return (
     <div>
       {loading && <Loader />}

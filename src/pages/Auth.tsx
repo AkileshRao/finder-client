@@ -15,10 +15,8 @@ const Auth = () => {
     const [role, setRole] = useState("")
     const { setLoading, loading } = useLoader()!
     const navigate = useNavigate();
-
     const { addToast } = useToast()!
     const { isLoggedIn, login, setIsLoggedIn } = useAuth();
-
 
     const handleChange = (event: any) => {
         const { name, value } = event.target;
@@ -29,10 +27,10 @@ const Auth = () => {
     }
 
     const handleSubmit = (event: any) => {
-        setLoading(true)
         event.preventDefault();
         const { status, message } = validator();
         if (!status) return addToast("error", "Error", message)
+        setLoading(true)
         login(mode, username, password, role).then((res: any) => {
             setLoading(false)
             if (mode == "LOGIN") {
@@ -49,7 +47,7 @@ const Auth = () => {
         }).catch((err: any) => {
             setLoading(false)
             console.log(err);
-            return addToast("error", "Error", "Something went wrong! Please try again.")
+            return addToast("error", "Error", "User already exists!")
         })
     }
 

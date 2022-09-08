@@ -5,8 +5,9 @@ import App from './App'
 import LoaderWrapper from './components/Loader'
 import './index.css'
 import { ToastProvider } from './customHooks/useToast'
-import { AuthProvider } from './customHooks/useAuth'
+import { AuthProvider, useAuth } from './customHooks/useAuth'
 import { LoaderProvider } from './customHooks/useLoader'
+import axios from 'axios'
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

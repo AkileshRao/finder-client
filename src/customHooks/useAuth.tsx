@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }: any) => {
         localStorage.clear();
         setIsLoggedIn(false)
         navigate("/")
+        window.location.reload()
     }
 
     return <AuthContext.Provider value={{ login, logout, isLoggedIn, setIsLoggedIn }}>
